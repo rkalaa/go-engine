@@ -43,8 +43,10 @@ func (v *Vector) Magnitude() float64 {
 	return size
 }
 
-func (v *Vector) dotProduct(Vector2 Vector) float64 {
+// use for collisions later
+/* func (v *Vector) dotProduct(Vector2 Vector) float64 {
 	directionX := v.XValue * Vector2.XValue
 	directionY := v.YValue * Vector2.YValue
 	return directionX + directionY
 }
+*/

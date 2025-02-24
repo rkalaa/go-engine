@@ -24,12 +24,12 @@ func (e *Engine) SetWalls(screenWidth, screenHeight int) {
 
 func (e *Engine) StartOppositeObjects(posX, posY float64, speedX, speedY float64, Width, Height int) {
 	//first object assigned
-	Position := objects.Vector{XValue: posX, YValue: posY}
-	Velocity := objects.Vector{XValue: speedX, YValue: posY}
+	Position := objects.Vector{XValue: 0, YValue: posY / 2}
+	Velocity := objects.Vector{XValue: speedX, YValue: speedY}
 	Object1 := objects.Object{Position: Position, Velocity: Velocity, Width: Width, Height: Height}
 	// second object given negative x values
-	InvertPosition := objects.Vector{XValue: -posX, YValue: posY}
-	InvertVelocity := objects.Vector{XValue: -speedX, YValue: posY}
+	InvertPosition := objects.Vector{XValue: posX, YValue: posY / posY / 2}
+	InvertVelocity := objects.Vector{XValue: -speedX, YValue: speedY}
 	Object2 := objects.Object{Position: InvertPosition, Velocity: InvertVelocity, Width: Width, Height: Height}
 
 	AllObjects := [2]objects.Object{Object1, Object2}
