@@ -28,7 +28,7 @@ func (e *Engine) StartOppositeObjects(posX, posY float64, speedX, speedY float64
 	Velocity := objects.Vector{XValue: speedX, YValue: speedY}
 	Object1 := objects.Object{Position: Position, Velocity: Velocity, Width: Width, Height: Height}
 	// second object given negative x values
-	InvertPosition := objects.Vector{XValue: posX, YValue: posY / posY / 2}
+	InvertPosition := objects.Vector{XValue: posX, YValue: posY / 2}
 	InvertVelocity := objects.Vector{XValue: -speedX, YValue: speedY}
 	Object2 := objects.Object{Position: InvertPosition, Velocity: InvertVelocity, Width: Width, Height: Height}
 

@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	screenHeight = 1200
-	screenWidth  = 700
+	screenWidth  int = 1000
+	screenHeight int = 1000
 )
 
 type Game struct {
@@ -29,7 +29,7 @@ func (g *Game) Update() error {
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-
+	vector.DrawFilledRect(screen, 1100, 700, 10, 10, color.White, true)
 	for _, object := range g.Engine.Objects {
 		vector.DrawFilledRect(screen, float32(object.Position.XValue), float32(object.Position.YValue), float32(object.Width), float32(object.Height), color.White, true)
 	}
@@ -37,16 +37,17 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 640, 480
+	return 100, 100
 }
 
 func main() {
 
 	Engine := game.Engine{}
 	Engine.SetWalls(screenWidth, screenHeight)
-	Engine.StartOppositeObjects(screenWidth, screenHeight, 20, -2, 5, 5)
+	Engine.StartOppositeObjects(float64(screenWidth), float64(screenHeight), 20, -2, 5, 5)
 	game := &Game{Engine: Engine}
-	ebiten.SetWindowSize(screenHeight, screenWidth)
+	ebiten.SetWindowSize(screenWidth, screenHeight)
+	ebiten.SetTPS(1)
 	ebiten.SetWindowTitle("Go-Engine")
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
