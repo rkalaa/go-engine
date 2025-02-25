@@ -24,12 +24,12 @@ func (e *Engine) SetWalls(screenWidth, screenHeight int) {
 
 func (e *Engine) StartOppositeObjects(posX, posY float64, speedX, speedY float64, Width, Height int) {
 	//first object assigned
-	Position := objects.Vector{XValue: 0, YValue: posY / 2}
-	Velocity := objects.Vector{XValue: speedX, YValue: speedY}
+	Position := objects.Vector{XValue: 0, YValue: posY / posY * 1.1}
+	Velocity := objects.Vector{XValue: speedX, YValue: -speedY}
 	Object1 := objects.Object{Position: Position, Velocity: Velocity, Width: Width, Height: Height}
 	// second object given negative x values
-	InvertPosition := objects.Vector{XValue: posX, YValue: posY / 2}
-	InvertVelocity := objects.Vector{XValue: -speedX, YValue: speedY}
+	InvertPosition := objects.Vector{XValue: posX, YValue: posY / posY * 1.1}
+	InvertVelocity := objects.Vector{XValue: -speedX, YValue: -speedY}
 	Object2 := objects.Object{Position: InvertPosition, Velocity: InvertVelocity, Width: Width, Height: Height}
 
 	AllObjects := [2]objects.Object{Object1, Object2}
@@ -66,6 +66,22 @@ func (e *Engine) CheckCollisions() bool {
 
 func (e *Engine) IncrementPosition() {
 	(e.Objects)[0].Position = (e.Objects)[0].Position.Add((e.Objects)[0].Velocity)
-	(e.Objects)[1].Position = (e.Objects)[0].Position.Add((e.Objects)[1].Velocity)
+	(e.Objects)[1].Position = (e.Objects)[1].Position.Add((e.Objects)[1].Velocity)
 
+}
+
+func (e *Engine) HandleCollision() error {
+	var dotProd float64
+
+	switch {
+
+	case dotProd < 0: // moving away
+
+	case dotProd > 0: //moving towards
+
+	default: //perpendicular
+
+	}
+
+	return nil
 }
