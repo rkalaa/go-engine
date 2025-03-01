@@ -1,6 +1,8 @@
 package game
 
 import (
+	"math"
+
 	"github.com/rkalaa/go-engine/internal/objects"
 )
 
@@ -71,17 +73,89 @@ func (e *Engine) IncrementPosition() {
 }
 
 func (e *Engine) HandleCollision() error {
-	var dotProd float64
+	// Calculate dot product of velocities to determine relative motion
+	dotProd := e.Objects[0].Velocity.DotProduct(e.Objects[1].Velocity)
+
+	// Object properties (mutable copies since Objects is an array)
+	obj1 := e.Objects[0]
+	obj2 := e.Objects[1]
+
+	// Calculate overlap to resolve penetration (Width and Height as int, cast to float64)
+	xOverlap := math.Min(
+		obj1.Position.XValue+float64(obj1.Width)-obj2.Position.XValue,
+		obj2.Position.XValue+float64(obj2.Width)-obj1.Position.XValue,
+	)
+	yOverlap := math.Min(
+		obj1.Position.YValue+float64(obj1.Height)-obj2.Position.YValue,
+		obj2.Position.YValue+float64(obj2.Height)-obj1.Position.YValue,
+	)
 
 	switch {
+	case dotProd < 0:
+		// Moving away, just resolve overlap to prevent sticking
+		if xOverlap < yOverlap {
+			push := xOverlap / 2
+			if obj1.Position.XValue < obj2.Position.XValue {
+				obj1.Position.XValue -= push
+				obj2.Position.XValue += push
+			} else {
+				obj1.Position.XValue += push
+				obj2.Position.XValue -= push
+			}
+		} else {
+			push := yOverlap / 2
+			if obj1.Position.YValue < obj2.Position.YValue {
+				obj1.Position.YValue -= push
+				obj2.Position.YValue += push
+			} else {
+				obj1.Position.YValue += push
+				obj2.Position.YValue -= push
+			}
+		}
 
-	case dotProd < 0: // moving away
+	case dotProd > 0:
+		// Moving towards, bounce and resolve overlap
+		// Dampen velocity slightly for realism (adjust 0.8 as needed)
+		obj1.Velocity.XValue = -obj1.Velocity.XValue * 0.8
+		obj1.Velocity.YValue = -obj1.Velocity.YValue * 0.8
+		obj2.Velocity.XValue = -obj2.Velocity.XValue * 0.8
+		obj2.Velocity.YValue = -obj2.Velocity.YValue * 0.8
 
-	case dotProd > 0: //moving towards
+		// Resolve overlap along smallest penetration axis
+		if xOverlap < yOverlap {
+			push := xOverlap / 2
+			if obj1.Position.XValue < obj2.Position.XValue {
+				obj1.Position.XValue -= push
+				obj2.Position.XValue += push
+			} else {
+				obj1.Position.XValue += push
+				obj2.Position.XValue -= push
+			}
+		} else {
+			push := yOverlap / 2
+			if obj1.Position.YValue < obj2.Position.YValue {
+				obj1.Position.YValue -= push
+				obj2.Position.YValue += push
+			} else {
+				obj1.Position.YValue += push
+				obj2.Position.YValue -= push
+			}
+		}
 
-	default: //perpendicular
-
+	default:
+		// Perpendicular, adjust dominant velocity for glancing collision
+		if math.Abs(obj1.Velocity.XValue) > math.Abs(obj1.Velocity.YValue) {
+			obj1.Velocity.XValue = -obj1.Velocity.XValue * 0.8
+			obj2.Velocity.XValue = -obj2.Velocity.XValue * 0.8
+		} else {
+			obj1.Velocity.YValue = -obj1.Velocity.YValue * 0.8
+			obj2.Velocity.YValue = -obj2.Velocity.YValue * 0.8
+		}
 	}
+
+	// Update the engine's Objects array with modified objects
+	e.Objects[0] = obj1
+	e.Objects[1] = obj2
 
 	return nil
 }
